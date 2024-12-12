@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using static Types;
 
@@ -8,3 +7,4 @@ public class Wave : ScriptableObject
     public WaveEnemy[] enemies;
     public GameObject boss;
 }
+

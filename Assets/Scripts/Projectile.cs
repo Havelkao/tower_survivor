@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private Firearm firearm;
+    private RangedWeapon weapon;
     private Transform target;
     private Rigidbody rb;
 
-    public void Init(Firearm firearm, Transform target)
+    public void Init(RangedWeapon rangedWeapon, Transform target)
     {
-        this.firearm = firearm;
+        this.weapon = rangedWeapon;
         this.target = target;
     }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.mass = firearm.mass;
+        rb.mass = weapon.mass;
         if (target != null)
         {
             Fire();
@@ -26,7 +26,7 @@ public class Projectile : MonoBehaviour
     {
         CollisionEffect(collision.gameObject);
 
-        if (firearm.aoe > 0)
+        if (weapon.aoe > 0)
         {
             CheckAoE(transform.position);
         }
@@ -34,24 +34,18 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, firearm.aoe);
-    }
-
     void CollisionEffect(GameObject collidedObject)
     {
         if (collidedObject.CompareTag("Enemy"))
         {
             Enemy enemy = collidedObject.GetComponent<Enemy>();
-            enemy.TakeDamage(firearm.damage * Utils.GetDamageMulti(firearm.damageType, enemy.armourType));
+            enemy.TakeDamage(weapon);
         }
     }
 
     void Fire()
     {
-        if (firearm.isGroundWeapon == true)
+        if (weapon.isGroundWeapon == true)
         {
             FireAtAngle();
         }
@@ -64,7 +58,7 @@ public class Projectile : MonoBehaviour
     void FireDirectly()
     {
         Vector3 direction = target.transform.position - transform.position;
-        rb.AddForce(firearm.projectileSpeed * direction, ForceMode.Impulse);
+        rb.AddForce(weapon.projectileSpeed * direction, ForceMode.Impulse);
     }
 
 
@@ -90,7 +84,7 @@ public class Projectile : MonoBehaviour
 
     void CheckAoE(Vector3 center)
     {
-        Collider[] colliders = Physics.OverlapSphere(center, firearm.aoe);
+        Collider[] colliders = Physics.OverlapSphere(center, weapon.aoe);
         foreach (Collider collider in colliders)
         {
             CollisionEffect(collider.gameObject);

@@ -1,99 +1,197 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+
 
 public class Shooter : MonoBehaviour
 {
-    public Firearm _firearm;
-    private Firearm firearm;
+    public List<RangedWeapon> _weapons;
+    private List<RangedWeapon> weapons = new();
+    private Transform projectileContainer;
 
     void Start()
     {
-        firearm = Instantiate(_firearm);
-        Invoke(nameof(Fire), 1);
-    }
-
-    private void OnEnable()
-    {
-        Invoke(nameof(Fire), 0);
-    }
-
-    void OnDisable()
-    {
-        CancelInvoke(nameof(Fire));
-    }
-
-    void Fire()
-    {
-        Invoke(nameof(Fire), 1 / firearm.attackSpeed);
-        if (SpawnManager.Instance.transform.childCount == 0) return;
-
-        Transform[] enemies = GetOldestTargets(SpawnManager.Instance.transform, firearm.multiStrike);
-        //Transform[] enemies = GetRandomTarget(EnemySpawner.Instance.transform);
-        if (enemies.Length == 0) return;
-
-        foreach (var enemy in enemies)
+        projectileContainer = transform.Find("Projectiles");
+        if (projectileContainer == null)
         {
-            GameObject projectile = Instantiate(firearm.projectilePrefab, transform.position + Vector3.up * 3, transform.rotation, transform.Find("Projectiles"));
-            Projectile projectileScript = projectile.GetComponent<Projectile>();
-            projectileScript.Init(firearm, enemy);
-            Destroy(projectile, 5);
+            projectileContainer = transform;
+        }
+
+        foreach (RangedWeapon _weapon in _weapons)
+        {
+            RangedWeapon instance = Instantiate(_weapon);
+            weapons.Add(instance);
+        }
+
+        foreach (RangedWeapon weapon in weapons)
+        {
+            StartCoroutine(Fire(weapon));
         }
     }
 
-    public void ChangeMultistrike(int i)
+    IEnumerator Fire(RangedWeapon weapon)
     {
-        firearm.multiStrike += i;
+        while (true)
+        {
+            yield return new WaitForSeconds(1 / weapon.attackSpeed);
+
+            if (SpawnManager.Instance.transform.childCount == 0) continue;
+
+            Transform[] targetsInRange = GetObjectsWithinRange(SpawnManager.Instance.transform, weapon.range, (int)Types.PhysicsLayer.Enemy);
+            Transform[] targets = new Transform[0];
+            switch (weapon.targetMode)
+            {
+                case Types.TargetMode.Newest:
+                    targets = GetNewestEntities(targetsInRange, weapon.multiStrike);
+                    break;
+                case Types.TargetMode.Oldest:
+                    targets = GetClosestEntity(targetsInRange, weapon.multiStrike, SpawnManager.Instance.transform);
+                    break;
+                case Types.TargetMode.Closest:
+                    targets = GetOldestEntites(targetsInRange, weapon.multiStrike);
+                    break;
+                case Types.TargetMode.Random:
+                    targets = GetRandomEntites(targetsInRange, weapon.multiStrike);
+                    break;
+            }
+
+            if (targets.Length == 0) continue;
+
+            foreach (var target in targets)
+            {
+                GameObject projectile = Instantiate(weapon.projectilePrefab, transform.position + Vector3.up * 3, transform.rotation, projectileContainer);
+                Projectile projectileScript = projectile.GetComponent<Projectile>();
+                projectileScript.Init(weapon, target);
+                Destroy(projectile, 5);
+            }
+        }
     }
 
-    Transform[] GetRandomTarget(Transform parent, int n = 1)
+    Transform[] GetObjectsWithinRange(Transform parent, float distance, int layer)
     {
-        //int maxCount = n > parent.childCount ? parent.childCount : n;
-        Transform[] targets = new Transform[1];
-        targets[0] = parent.GetChild(Random.Range(0, parent.childCount - 1));
+        
+        Collider[] colliders = Physics.OverlapSphere(parent.position, distance, 1 << layer);
+        Transform[] result = new Transform[colliders.Length];
 
-        return targets;
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            
+            result[i] = colliders[i].transform;
+        }
+
+        return result;
     }
 
-    Transform[] GetOldestTargets(Transform parent, int n)
+    Transform[] GetRandomEntites(Transform[] entities, int count)
     {
-        int maxCount = n > parent.childCount ? parent.childCount : n;
-        Transform[] targets = new Transform[maxCount];
+        int length = entities.Length;
+        if (length == 0)
+        {
+            return new Transform[0];
+        }
+
+        if (length <= count)
+        {
+            return entities;
+        }
+
+        HashSet<int> selectedIndices = new();
+        Transform[] randomEntity = new Transform[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            int randomIndex;
+            do
+            {
+                randomIndex = UnityEngine.Random.Range(0, length);
+            }
+            while (selectedIndices.Contains(randomIndex));  // Ensure uniqueness
+
+            selectedIndices.Add(randomIndex);
+            randomEntity[i] = entities[randomIndex];
+        }
+
+        return randomEntity;
+    }
+
+    Transform[] GetNewestEntities(Transform[] entities, int count)
+    {
+        int length = entities.Length;
+        if (length == 0)
+        {
+            return new Transform[0];
+        }
+
+        if (entities.Length <= count)
+        {
+            return entities;
+        }
+
+        int maxCount = Mathf.Min(count, entities.Length);
+        Transform[] result = new Transform[maxCount];
 
         for (int i = 0; i < maxCount; i++)
         {
-            if (parent.GetChild(i))
-            {
-                targets[i] = parent.GetChild(i);
-
-            }
+            result[i] = entities[i];
         }
-        return targets;
+
+        return result;
     }
 
-    Transform GetClosestTarget(Transform parent)
+    Transform[] GetOldestEntites(Transform[] entities, int count)
     {
-        Transform closestChild = null;
-        float closestDistanceSqr = Mathf.Infinity;
-
-        Vector3 parentPosition = parent.position;
-
-        foreach (Transform child in parent)
+        int length = entities.Length;
+        if (length == 0)
         {
-            if (!child.CompareTag("Enemy"))
-            {
-                continue;
-            }
-            float distanceSqr = (child.position - parentPosition).sqrMagnitude;
+            return new Transform[0];
+        }
 
-            if (distanceSqr < closestDistanceSqr)
+        if (entities.Length <= count)
+        {
+            return entities;
+        }
+
+        int maxCount = Mathf.Min(count, entities.Length);
+        Transform[] result = new Transform[maxCount];
+
+        for (int i = 0; i < maxCount; i++)
+        {
+            result[i] = entities[i];
+        }
+
+        return result;
+    }
+
+    public Transform[] GetClosestEntity(Transform[] entities, int count, Transform target)
+    {
+        int length = entities.Length;
+        if (length == 0)
+        {
+            return new Transform[0];
+        }
+
+        if (length == 1)
+        {
+            return new Transform[] { entities[0] };
+        }
+
+        int maxCount = Mathf.Min(count, length);
+        SortedList<float, Transform> sortedList = new();
+
+        foreach (Transform entity in entities)
+        {
+            float squaredMagnitude = (entity.position - target.position).sqrMagnitude;
+            sortedList[squaredMagnitude] = entity;
+
+            if (sortedList.Count > maxCount)
             {
-                closestDistanceSqr = distanceSqr;
-                closestChild = child;
+                sortedList.RemoveAt(sortedList.Count - 1);
             }
         }
 
-        return closestChild;
+        Transform[] closest = new Transform[maxCount];
+        sortedList.Values.CopyTo(closest, 0);
+        return closest;
     }
-
-    
-
 }

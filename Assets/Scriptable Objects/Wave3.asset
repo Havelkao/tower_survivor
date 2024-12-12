@@ -18,5 +18,5 @@ MonoBehaviour:
   - prefab: {fileID: 5336736455362693171, guid: f7255770f2e779e4a8774eb25ee1872c, type: 3}
     spawnRate: 2
   - prefab: {fileID: 5336736455362693171, guid: 2981be2a8f53b1945a4894182fa076b4, type: 3}
-    spawnRate: 4
+    spawnRate: 3
   boss: {fileID: 5336736455362693171, guid: 5fa267522240b414bb3a0b569020d186, type: 3}

@@ -9,10 +9,10 @@ public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager Instance;
     [SerializeField]
-    private float spawnDistance = 15f;
     public Wave[] waves;
+    private float spawnDistance = 15f;
     private Wave currentWave;
-    public int currentWaveIndex = 0;
+    private int currentWaveIndex = 0;
     private int waveDuration = 15;
     private int breakDuration = 5;
     private TextMeshProUGUI waveDisplay;
@@ -87,7 +87,6 @@ public class SpawnManager : MonoBehaviour
         Instantiate(prefab, spawnPosition, Quaternion.identity, transform);
     }
 
-
     Vector3 GetRandomPosition(float y)
     {
         float randomAngle = Random.Range(0f, Mathf.PI * 2f);
@@ -95,8 +94,5 @@ public class SpawnManager : MonoBehaviour
         float z = Mathf.Sin(randomAngle) * spawnDistance;
         return new Vector3(x, y, z);
     }
-
-
-
 }
 

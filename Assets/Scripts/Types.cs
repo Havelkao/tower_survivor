@@ -18,6 +18,25 @@ public class Types
         Chaos = 3
     };
 
+    public enum TargetMode
+    {
+        Oldest,
+        Newest,
+        Random,
+        Closest
+    }
+
+    public enum PhysicsLayer
+    {
+        Enemy = 6
+    }
+
+    public struct DamageTypeMultiplier
+    {
+        public DamageType damageType;
+        public float multiplier;
+    }
+
     [System.Serializable]
     public struct WaveEnemy {
         public GameObject prefab;

@@ -1,43 +1,51 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Unit
 {
-    public float maxHealth;
-    private float health;
-    private Image healthBar;
-    public float speed;
     public int damage;
+    public float speed;
+    public float attackSpeed;
     public int bounty;
-    public Types.ArmourType armourType;
     public int range;
     public bool isFlying;
     private Vector3 target;
+    private bool isAttacking = false;
+    private Weapon weapon;
+    private bool IsInRange { get { return Vector3.Distance(transform.position, target) <= range; } }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         Vector3 targetPosition = GameObject.Find("Tower").transform.position;
         target = targetPosition - (targetPosition - transform.position).normalized * range;
-        health = maxHealth;
-        healthBar = transform.GetComponentsInChildren<Image>()[1];
     }
 
 
-    public void Attack()
+    public virtual void Attack()
     {
-
+        Player.Instance.TakeDamage(damage);
+        if (IsInRange)
+        {
+            Invoke(nameof(Attack), 1 / attackSpeed);
+        }
+        else
+        {
+            isAttacking = false;
+        }
     }
 
     private void Update()
     {
         if (health > 0)
         {
-            if (!IsInRange())
+            if (!IsInRange)
             {
                 Move();
-            } else
+            }
+            else if (!isAttacking)
             {
-                Attack();
+                isAttacking = true;
+                Invoke(nameof(Attack), 0);
             }
         }
         else
@@ -45,27 +53,15 @@ public class Enemy : MonoBehaviour
             Die();
         }
     }
-
-    bool IsInRange()
-    {
-        return Vector3.Distance(transform.position, target) <= range;
-    }
-
-    public void TakeDamage(float damage)
-    {
-        if (damage > 0)
-        {
-            health -= damage;
-            healthBar.fillAmount = health / maxHealth;
-        }
-    }
-    public void Move() 
+    public void Move()
     {
         transform.position = Vector3.MoveTowards(transform.position, target + new Vector3(0, transform.position.y, 0), speed * Time.deltaTime);
     }
 
-    public void Die()
+    protected override void Die()
     {
-        Destroy(gameObject);
+        base.Die();
+        Player.Instance.ChangeBankValue(bounty);
     }
+
 }

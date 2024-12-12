@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2487833696719655305}
   - component: {fileID: 2331589710640542544}
   - component: {fileID: 451350460206983426}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy_Slow
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -123,10 +123,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  health: 0
+  armourType: 2
+  armour: 1
+  damage: 5
   speed: 1
-  damage: 10
-  bounty: 0
-  armourType: 0
+  attackSpeed: 1
+  bounty: 1
   range: 1
   isFlying: 0
 --- !u!1001 &2618200270159967694
