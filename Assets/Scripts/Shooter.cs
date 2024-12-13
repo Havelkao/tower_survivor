@@ -6,8 +6,9 @@ using UnityEngine;
 
 public class Shooter : MonoBehaviour
 {
+    //to do getter setter
     public List<RangedWeapon> _weapons;
-    private List<RangedWeapon> weapons = new();
+    public List<RangedWeapon> weapons = new();
     private Transform projectileContainer;
 
     void Start()

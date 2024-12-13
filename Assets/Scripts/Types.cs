@@ -28,18 +28,80 @@ public class Types
 
     public enum PhysicsLayer
     {
+        Projectile = 3,
         Enemy = 6
     }
 
-    public struct DamageTypeMultiplier
+    public enum UpgradableProp
     {
-        public DamageType damageType;
-        public float multiplier;
+        baseDamage,
+        damageMulti,
+        attackSpeedMulti,
+        multistrike,
+        aoe,
+        chains,
+        income,
+        bounty,
+        armour,
+        health,
+        movementSpeedMulti,
+        healthMulti
     }
 
+    public enum WeaponUpgradableProp
+    {
+        baseDamage,
+        damageMulti,
+        attackSpeedMulti,
+        multistrike,
+        aoe,
+        chainCount
+    }
+
+    public enum PlayerUpgradableProp
+    {
+        income, 
+        bounty, 
+        armour, 
+        maxHealth
+    }
+
+    public enum EnemyUpgradableProp
+    {
+        damageMulti = UpgradableProp.damageMulti, 
+        attackSpeedMulti = UpgradableProp.attackSpeedMulti,
+        movementSpeedMulti = UpgradableProp.movementSpeedMulti
+    }
+
+    public enum UpgradeSubject
+    {
+        Weapon,
+        Player,
+        Enemy
+    }
+
+    public enum WeaponType
+    {
+        Bow,
+        Cannon
+    }
+
+
+    //public struct DamageTypeMultiplier
+    //{
+    //    public DamageType damageType;
+    //    public float multiplier;
+    //}
+
     [System.Serializable]
-    public struct WaveEnemy {
+    public struct WaveEnemy
+    {
         public GameObject prefab;
         public float spawnRate;
+    }
+
+    public interface IUpgradable
+    {
+        //void ApplyUpgrade(UpgradableProps property, float value);
     }
 }

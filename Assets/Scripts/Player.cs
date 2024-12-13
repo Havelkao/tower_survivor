@@ -2,12 +2,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player : Unit
+public class Player : Unit, Types.IUpgradable
 {
     public static Player Instance;
-    private int income = 10;
+    public int income = 10;
     private readonly int incomePeriod = 5;
-    private int bank = 100; 
+    public int bank = 100; 
     private TextMeshProUGUI bankDisplay;
     private TextMeshProUGUI incomeDisplay;
     //private globalDamageModifiers 
@@ -49,7 +49,7 @@ public class Player : Unit
             income += amount;
             incomeDisplay.text = income.ToString();
         }
-    }
+    }    
 }
 
 

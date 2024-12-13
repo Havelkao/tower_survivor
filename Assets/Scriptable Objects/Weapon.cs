@@ -1,91 +1,92 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using static Types;
 
-public class Weapon : ScriptableObject
+public class Weapon : ScriptableObject, IUpgradable
 {
     public int baseDamage;
     public int damage;
     public float baseAttackSpeed;
     public float attackSpeed;
-    public Types.DamageType damageType;
+    public DamageType damageType;
     public float range;
     public bool isGroundWeapon;
     public float aoe;
+    public float damageMultiplier;
+    public float damageTypeMultiplier;
+    public float attackSpeedMultiplier;
 
-    private float damageMultiplier;
-    private float damageTypeMultiplier;
-    private float attackSpeedMultiplier;
-
-    private void Awake()
-    {
-        
-    }
-    public void Upgrade(WeaponUpgrade upgrade)
-    {
-
-    }
-
-}
-
-public class DamageTypeMultipliers
-{
-    public DamageTypeMultipliers()
+    void ApplyUpgrade()
     {
 
     }
 }
 
-public class Upgrade : ScriptableObject
+public struct DamageTypeMultipliers
 {
-    public Upgradable property;
-    public UpgradeType type;
-    public Image sprite;
-    public float value;
-    public int weight;
+    public int baseDamage;
+    public float damageMulti;
+    public float attackSpeedMulti;
 
-    public void ApplyUpgrade()
+    public DamageTypeMultipliers(int baseDamage, float damageMulti, float attackSpeedMulti)
     {
-        //weapon.Upgrade(this);
+        this.baseDamage = baseDamage;
+        this.damageMulti = damageMulti;
+        this.attackSpeedMulti = attackSpeedMulti;
     }
 }
 
-public class WeaponUpgrade : Upgrade
+public class GlobalWeaponModifiers : IUpgradable
 {
-    
+    public static Dictionary<DamageType, DamageTypeMultipliers> damageTypesMultipliers = new() {
+        { DamageType.Normal, new DamageTypeMultipliers(0, 0f, 0) },
+        { DamageType.Magic, new DamageTypeMultipliers(0, 0f, 0) },
+        { DamageType.Pierce, new DamageTypeMultipliers(0, 0f, 0) },
+        { DamageType.Chaos, new DamageTypeMultipliers(0, 0f, 0) }
+    };
 
-    
-
+    public void ApplyUpgrade(Upgrade upgrade)
+    {
+        switch (upgrade.property)
+        {
+            //case WeaponUpgradableProp.baseDamage:
+            //    weapon.baseDamage += (int)value;
+            //    break;
+            //case WeaponUpgradableProp.damageMultiplier:
+            //    weapon.damage += (int)value;
+            //    break;
+            //case WeaponUpgradableProp.attackSpeedMultiplier:
+            //    weapon.attackSpeedMultiplier += value;
+            //    break;
+        }
+    }
 }
 
-
-public enum Upgradable
+public class GlobalEnemyModifiers : IUpgradable
 {
-    baseAttackSpeed,
-    attackSpeedMultiplier,
-    baseDamage,
-    damageMultiplier,
-    aoe,
-    chains,
-    income,
-    bounty
+    public static float damageMulti;
+    public static float healthMulti;
+    public static float attackSpeedMulti;
+    public static float movementSpeedMulti;
+    public static int armour;
+
+    public void ApplyUpgrade(Upgrade upgrade)
+    {
+        switch (upgrade.property)
+        {
+            case UpgradableProp.damageMulti:
+                damageMulti += upgrade.value;
+                break;
+            case UpgradableProp.attackSpeedMulti:
+                attackSpeedMulti += upgrade.value;
+                break;
+            case UpgradableProp.healthMulti:
+                healthMulti += upgrade.value;
+                break;
+            case UpgradableProp.movementSpeedMulti:
+                movementSpeedMulti += upgrade.value;
+                break;
+        }
+    }
 }
 
-public enum UpgradeType
-{
-    weapon,
-    player,
-    enemy
-}
-
-
-
-//public void BuyMultistrike()
-//{
-//    int price = 100;
-//    if (Player.Instance.bank >= price)
-//    {
-//        Player.Instance.ChangeBankValue(-price);
-//        weapon.multiStrike += 1;
-//    }
-//}

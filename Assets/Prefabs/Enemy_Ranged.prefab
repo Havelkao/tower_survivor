@@ -126,9 +126,12 @@ MonoBehaviour:
   health: 0
   armourType: 1
   armour: 0
-  damage: 1
-  speed: 1
-  attackSpeed: 1
+  baseDamage: 5
+  damageMultiplier: 0
+  movementSpeed: 1
+  movementSpeedMultiplier: 0
+  baseAtackSpeed: 0.5
+  attackSpeedMultiplier: 0
   bounty: 1
   range: 3
   isFlying: 0

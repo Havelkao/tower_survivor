@@ -2,9 +2,12 @@ using UnityEngine;
 
 public class Enemy : Unit
 {
-    public int damage;
-    public float speed;
-    public float attackSpeed;
+    public int baseDamage;
+    public float damageMultiplier;
+    public float movementSpeed;
+    public float movementSpeedMultiplier;
+    public float baseAtackSpeed;
+    public float attackSpeedMultiplier;
     public int bounty;
     public int range;
     public bool isFlying;
@@ -23,10 +26,10 @@ public class Enemy : Unit
 
     public virtual void Attack()
     {
-        Player.Instance.TakeDamage(damage);
+        Player.Instance.TakeDamage(baseDamage);
         if (IsInRange)
         {
-            Invoke(nameof(Attack), 1 / attackSpeed);
+            Invoke(nameof(Attack), 1 / baseAtackSpeed);
         }
         else
         {
@@ -55,7 +58,7 @@ public class Enemy : Unit
     }
     public void Move()
     {
-        transform.position = Vector3.MoveTowards(transform.position, target + new Vector3(0, transform.position.y, 0), speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, target + new Vector3(0, transform.position.y, 0), movementSpeed * Time.deltaTime);
     }
 
     protected override void Die()
