@@ -5,9 +5,10 @@ public class Unit : MonoBehaviour
 {
     public float maxHealth;
     public float health;
-    private Image healthBar;
+    public float healthMulti;
     public Types.ArmourType armourType;
     public int armour;
+    private Image healthBar;
 
     protected virtual void Awake()
     {

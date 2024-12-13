@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7793cbb702df6c848bfa1c55b9241dc5, type: 3}
-  m_Name: BowMultistrikeUpgrade
+  m_Name: CannonProjCountUpgrade
   m_EditorClassIdentifier: 
   property: 3
   subject: 0
@@ -18,4 +18,5 @@ MonoBehaviour:
   value: 1
   price: 100
   weight: 0
-  weapon: 0
+  weaponType: 1
+  damageType: 0

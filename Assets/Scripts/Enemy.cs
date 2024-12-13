@@ -6,7 +6,7 @@ public class Enemy : Unit
     public float damageMultiplier;
     public float movementSpeed;
     public float movementSpeedMultiplier;
-    public float baseAtackSpeed;
+    public float baseAttackSpeed;
     public float attackSpeedMultiplier;
     public int bounty;
     public int range;
@@ -29,7 +29,7 @@ public class Enemy : Unit
         Player.Instance.TakeDamage(baseDamage);
         if (IsInRange)
         {
-            Invoke(nameof(Attack), 1 / baseAtackSpeed);
+            Invoke(nameof(Attack), 1 / baseAttackSpeed);
         }
         else
         {

@@ -16,7 +16,6 @@ public class SpawnManager : MonoBehaviour
     private TextMeshProUGUI waveDisplay;
     private Timer timer;
 
-
     private void Awake()
     {
         if (Instance == null)

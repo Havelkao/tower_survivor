@@ -1,17 +1,16 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static Types;
 
 public class Player : Unit, Types.IUpgradable
 {
     public static Player Instance;
     public int income = 10;
-    private readonly int incomePeriod = 5;
     public int bank = 100; 
+    private readonly int incomePeriod = 5;
     private TextMeshProUGUI bankDisplay;
     private TextMeshProUGUI incomeDisplay;
-    //private globalDamageModifiers 
-
 
     protected override void Awake()
     {
@@ -49,7 +48,26 @@ public class Player : Unit, Types.IUpgradable
             income += amount;
             incomeDisplay.text = income.ToString();
         }
-    }    
+    }
+    
+    public void ApplyUpgrade(Upgrade upgrade)
+    {
+        switch (upgrade.property)
+        {
+            case UpgradableProp.baseDamage:
+                IncreaseIncome((int)upgrade.value);
+                break;
+            case UpgradableProp.maxHealth:
+                health += upgrade.value;
+                break;
+            case UpgradableProp.healthMulti:
+                healthMulti += upgrade.value;
+                break;
+            case UpgradableProp.armour:
+                armour += (int)upgrade.value;
+                break;
+        }
+    }
 }
 
 

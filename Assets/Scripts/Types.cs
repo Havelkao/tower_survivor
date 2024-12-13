@@ -37,35 +37,18 @@ public class Types
         baseDamage,
         damageMulti,
         attackSpeedMulti,
-        multistrike,
+        projectileCount,
         aoe,
-        chains,
-        income,
-        bounty,
+        chainCount,
         armour,
-        health,
+        maxHealth,
         movementSpeedMulti,
-        healthMulti
+        healthMulti,
+        bounty,
+        income
     }
 
-    public enum WeaponUpgradableProp
-    {
-        baseDamage,
-        damageMulti,
-        attackSpeedMulti,
-        multistrike,
-        aoe,
-        chainCount
-    }
-
-    public enum PlayerUpgradableProp
-    {
-        income, 
-        bounty, 
-        armour, 
-        maxHealth
-    }
-
+    
     public enum EnemyUpgradableProp
     {
         damageMulti = UpgradableProp.damageMulti, 
@@ -102,6 +85,6 @@ public class Types
 
     public interface IUpgradable
     {
-        //void ApplyUpgrade(UpgradableProps property, float value);
+        void ApplyUpgrade(Upgrade upgrade);
     }
 }

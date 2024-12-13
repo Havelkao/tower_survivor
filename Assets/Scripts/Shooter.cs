@@ -11,7 +11,7 @@ public class Shooter : MonoBehaviour
     public List<RangedWeapon> weapons = new();
     private Transform projectileContainer;
 
-    void Start()
+    void Awake()
     {
         projectileContainer = transform.Find("Projectiles");
         if (projectileContainer == null)
@@ -44,16 +44,16 @@ public class Shooter : MonoBehaviour
             switch (weapon.targetMode)
             {
                 case Types.TargetMode.Newest:
-                    targets = GetNewestEntities(targetsInRange, weapon.multiStrike);
+                    targets = GetNewestEntities(targetsInRange, weapon.projectileCount);
                     break;
                 case Types.TargetMode.Oldest:
-                    targets = GetClosestEntity(targetsInRange, weapon.multiStrike, SpawnManager.Instance.transform);
+                    targets = GetClosestEntity(targetsInRange, weapon.projectileCount, SpawnManager.Instance.transform);
                     break;
                 case Types.TargetMode.Closest:
-                    targets = GetOldestEntites(targetsInRange, weapon.multiStrike);
+                    targets = GetOldestEntites(targetsInRange, weapon.projectileCount);
                     break;
                 case Types.TargetMode.Random:
-                    targets = GetRandomEntites(targetsInRange, weapon.multiStrike);
+                    targets = GetRandomEntites(targetsInRange, weapon.projectileCount);
                     break;
             }
 
@@ -107,7 +107,7 @@ public class Shooter : MonoBehaviour
             {
                 randomIndex = UnityEngine.Random.Range(0, length);
             }
-            while (selectedIndices.Contains(randomIndex));  // Ensure uniqueness
+            while (selectedIndices.Contains(randomIndex));  
 
             selectedIndices.Add(randomIndex);
             randomEntity[i] = entities[randomIndex];

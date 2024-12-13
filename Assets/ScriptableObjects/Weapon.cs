@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Types;
 
-public class Weapon : ScriptableObject, IUpgradable
+public class Weapon : ScriptableObject
 {
     public int baseDamage;
     public int damage;
@@ -12,14 +12,9 @@ public class Weapon : ScriptableObject, IUpgradable
     public float range;
     public bool isGroundWeapon;
     public float aoe;
-    public float damageMultiplier;
-    public float damageTypeMultiplier;
-    public float attackSpeedMultiplier;
-
-    void ApplyUpgrade()
-    {
-
-    }
+    public float damageMulti;
+    public float damageTypeMulti;
+    public float attackSpeedMulti;    
 }
 
 public struct DamageTypeMultipliers
@@ -47,8 +42,8 @@ public class GlobalWeaponModifiers : IUpgradable
 
     public void ApplyUpgrade(Upgrade upgrade)
     {
-        switch (upgrade.property)
-        {
+        //switch (upgrade.property)
+        //{
             //case WeaponUpgradableProp.baseDamage:
             //    weapon.baseDamage += (int)value;
             //    break;
@@ -58,7 +53,7 @@ public class GlobalWeaponModifiers : IUpgradable
             //case WeaponUpgradableProp.attackSpeedMultiplier:
             //    weapon.attackSpeedMultiplier += value;
             //    break;
-        }
+        //}
     }
 }
 

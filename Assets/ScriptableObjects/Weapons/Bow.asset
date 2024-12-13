@@ -20,8 +20,12 @@ MonoBehaviour:
   range: 15
   isGroundWeapon: 0
   aoe: 0
+  damageMulti: 0
+  damageTypeMulti: 0
+  attackSpeedMulti: 0
   projectilePrefab: {fileID: 6868376202079178089, guid: 2433c9aeca53dcb4284402ae73b68436, type: 3}
   projectileSpeed: 3
   mass: 1
-  multiStrike: 1
+  projectileCount: 1
+  chainCount: 0
   targetMode: 2
