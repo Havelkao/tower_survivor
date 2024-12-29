@@ -11,16 +11,15 @@ public class Enemy : Unit
     public int bounty;
     public int range;
     public bool isFlying;
-    private Vector3 target;
+    private Vector3 targetPos;
     private bool isAttacking = false;
-    private Weapon weapon;
-    private bool IsInRange { get { return Vector3.Distance(transform.position, target) <= range; } }
+    private bool IsInRange { get { return Vector3.Distance(transform.position, targetPos) <= range; } }
 
     protected override void Awake()
     {
         base.Awake();
         Vector3 targetPosition = GameObject.Find("Tower").transform.position;
-        target = targetPosition - (targetPosition - transform.position).normalized * range;
+        targetPos = targetPosition - (targetPosition - transform.position).normalized * range;
     }
 
 
@@ -58,7 +57,7 @@ public class Enemy : Unit
     }
     public void Move()
     {
-        transform.position = Vector3.MoveTowards(transform.position, target + new Vector3(0, transform.position.y, 0), movementSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, targetPos + new Vector3(0, transform.position.y, 0), movementSpeed * Time.deltaTime);
     }
 
     protected override void Die()
@@ -66,5 +65,4 @@ public class Enemy : Unit
         base.Die();
         Player.Instance.ChangeBankValue(bounty);
     }
-
 }

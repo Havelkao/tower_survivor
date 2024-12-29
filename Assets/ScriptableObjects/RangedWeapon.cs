@@ -1,5 +1,4 @@
 using UnityEngine;
-using static Types;
 
 [CreateAssetMenu(fileName = "RangedWeapon", menuName = "Scriptable Objects/RangedWeapon")]
 public class RangedWeapon : Weapon, IUpgradable
@@ -9,29 +8,30 @@ public class RangedWeapon : Weapon, IUpgradable
     public float mass;
     public int projectileCount;
     public int chainCount;
-    public Types.TargetMode targetMode;
+    public int chainDistance;
+    public TargetMode targetMode;
 
     public void ApplyUpgrade(Upgrade upgrade)
     {
         switch (upgrade.property)
         {
-            case UpgradableProp.baseDamage:
+            case UpgradableProp.BaseDamage:
                 baseDamage += (int)upgrade.value;
                 break;
-            case UpgradableProp.damageMulti:
+            case UpgradableProp.DamageMulti:
                 damageMulti += (int)upgrade.value;
                 break;
-            case UpgradableProp.attackSpeedMulti:
+            case UpgradableProp.AttackSpeedMulti:
                 attackSpeedMulti += upgrade.value;
                 break;
-            case UpgradableProp.projectileCount:
+            case UpgradableProp.ProjectileCount:
                 projectileCount += (int)upgrade.value;
                 break;
-            case UpgradableProp.aoe:
+            case UpgradableProp.Aoe:
                 aoe += upgrade.value;
                 break;
-            case UpgradableProp.chainCount:
-                damage += (int)upgrade.value;
+            case UpgradableProp.ChainCount:
+                chainCount += (int)upgrade.value;
                 break;
         }
     }

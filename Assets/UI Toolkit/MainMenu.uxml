@@ -1,0 +1,12 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/styles.uss?fileID=7433441132597879392&amp;guid=e53200e1dd0a58b4db6b121c236429cb&amp;type=3#styles" />
+    <engine:VisualElement name="Body" style="flex-grow: 1; padding-top: 5%; padding-right: 5%; padding-bottom: 5%; padding-left: 5%; align-items: flex-start; background-image: none; justify-content: flex-start;">
+        <engine:VisualElement name="Menu" class="text-normal" style="flex-grow: 1; align-content: auto; width: 50%; align-items: center; justify-content: center; align-self: flex-start; -unity-text-align: upper-left;">
+            <engine:Label text="Tower Gamesa" name="Header" class="header" style="-unity-text-align: upper-center; font-size: 60px; align-items: auto; -unity-font-style: bold; margin-bottom: 40px;" />
+            <engine:VisualElement name="Submenu" style="flex-grow: 0; flex-direction: column; align-items: stretch; justify-content: space-evenly; width: 345px; height: 170px;">
+                <engine:Button text="New Game" name="StartGameButton" class="button" style="width: auto;" />
+                <engine:Button text="Exit" name="ExitButton" class="button" style="width: auto;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

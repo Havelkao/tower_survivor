@@ -1,15 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
-
 
 public class Shooter : MonoBehaviour
 {
-    //to do getter setter
-    public List<RangedWeapon> _weapons;
-    public List<RangedWeapon> weapons = new();
+    public List<RangedWeapon> weaponPrototypes;
+    private List<RangedWeapon> _weapons = new();
+    public List<RangedWeapon> Weapons
+    {
+        get
+        {
+            if (_weapons.Count == 0)
+            {
+                foreach (RangedWeapon weapon in weaponPrototypes)
+                {
+                    RangedWeapon instance = Instantiate(weapon);
+                    _weapons.Add(instance);
+                }
+                return _weapons;
+            }
+            else { return _weapons; }
+        }
+        set
+        {
+            weaponPrototypes.AddRange(value);
+            foreach (RangedWeapon newValue in value)
+            {
+                RangedWeapon instance = Instantiate(newValue);
+                _weapons.Add(instance);
+            }
+        }
+    }
     private Transform projectileContainer;
+
 
     void Awake()
     {
@@ -19,13 +43,8 @@ public class Shooter : MonoBehaviour
             projectileContainer = transform;
         }
 
-        foreach (RangedWeapon _weapon in _weapons)
-        {
-            RangedWeapon instance = Instantiate(_weapon);
-            weapons.Add(instance);
-        }
 
-        foreach (RangedWeapon weapon in weapons)
+        foreach (RangedWeapon weapon in Weapons)
         {
             StartCoroutine(Fire(weapon));
         }
@@ -39,21 +58,21 @@ public class Shooter : MonoBehaviour
 
             if (SpawnManager.Instance.transform.childCount == 0) continue;
 
-            Transform[] targetsInRange = GetObjectsWithinRange(SpawnManager.Instance.transform, weapon.range, (int)Types.PhysicsLayer.Enemy);
+            Transform[] targetsInRange = TargetLocator.GetTransformsWithinRange(SpawnManager.Instance.transform, weapon.range, (int)PhysicsLayer.Enemy);
             Transform[] targets = new Transform[0];
             switch (weapon.targetMode)
             {
-                case Types.TargetMode.Newest:
-                    targets = GetNewestEntities(targetsInRange, weapon.projectileCount);
+                case TargetMode.Oldest:
+                    targets = TargetLocator.GetFirst(targetsInRange, weapon.projectileCount);
                     break;
-                case Types.TargetMode.Oldest:
-                    targets = GetClosestEntity(targetsInRange, weapon.projectileCount, SpawnManager.Instance.transform);
+                case TargetMode.Closest:
+                    targets = TargetLocator.GetClosest(targetsInRange, weapon.projectileCount, SpawnManager.Instance.transform);
                     break;
-                case Types.TargetMode.Closest:
-                    targets = GetOldestEntites(targetsInRange, weapon.projectileCount);
+                case TargetMode.Newest:
+                    targets = TargetLocator.GetLast(targetsInRange, weapon.projectileCount);
                     break;
-                case Types.TargetMode.Random:
-                    targets = GetRandomEntites(targetsInRange, weapon.projectileCount);
+                case TargetMode.Random:
+                    targets = TargetLocator.GetRandom(targetsInRange, weapon.projectileCount);
                     break;
             }
 
@@ -68,23 +87,28 @@ public class Shooter : MonoBehaviour
             }
         }
     }
+}
 
-    Transform[] GetObjectsWithinRange(Transform parent, float distance, int layer)
+public static class TargetLocator
+{
+    public static Transform[] GetTransformsWithinRange(Transform center, float distance, int layer)
     {
-        
-        Collider[] colliders = Physics.OverlapSphere(parent.position, distance, 1 << layer);
-        Transform[] result = new Transform[colliders.Length];
+        List<Transform> result = new();
 
-        for (int i = 0; i < colliders.Length; i++)
+        Collider[] colliders = Physics.OverlapSphere(center.position, distance, 1 << layer);
+        foreach (Collider collider in colliders)
         {
-            
-            result[i] = colliders[i].transform;
+            if (collider.gameObject == center.gameObject)
+            {
+                continue;
+            }
+            result.Add(collider.transform);
         }
 
-        return result;
+        return result.ToArray<Transform>();
     }
 
-    Transform[] GetRandomEntites(Transform[] entities, int count)
+    public static Transform[] GetRandom(Transform[] entities, int count)
     {
         int length = entities.Length;
         if (length == 0)
@@ -107,7 +131,7 @@ public class Shooter : MonoBehaviour
             {
                 randomIndex = UnityEngine.Random.Range(0, length);
             }
-            while (selectedIndices.Contains(randomIndex));  
+            while (selectedIndices.Contains(randomIndex));
 
             selectedIndices.Add(randomIndex);
             randomEntity[i] = entities[randomIndex];
@@ -116,10 +140,9 @@ public class Shooter : MonoBehaviour
         return randomEntity;
     }
 
-    Transform[] GetNewestEntities(Transform[] entities, int count)
+    public static Transform[] GetFirst(Transform[] entities, int count)
     {
-        int length = entities.Length;
-        if (length == 0)
+        if (entities.Length == 0)
         {
             return new Transform[0];
         }
@@ -129,21 +152,12 @@ public class Shooter : MonoBehaviour
             return entities;
         }
 
-        int maxCount = Mathf.Min(count, entities.Length);
-        Transform[] result = new Transform[maxCount];
-
-        for (int i = 0; i < maxCount; i++)
-        {
-            result[i] = entities[i];
-        }
-
-        return result;
+        return entities.Take(count).ToArray();
     }
 
-    Transform[] GetOldestEntites(Transform[] entities, int count)
+    public static Transform[] GetLast(Transform[] entities, int count)
     {
-        int length = entities.Length;
-        if (length == 0)
+        if (entities.Length == 0)
         {
             return new Transform[0];
         }
@@ -153,18 +167,13 @@ public class Shooter : MonoBehaviour
             return entities;
         }
 
-        int maxCount = Mathf.Min(count, entities.Length);
-        Transform[] result = new Transform[maxCount];
-
-        for (int i = 0; i < maxCount; i++)
-        {
-            result[i] = entities[i];
-        }
-
-        return result;
+        return entities.TakeLast(count).ToArray();
     }
 
-    public Transform[] GetClosestEntity(Transform[] entities, int count, Transform target)
+
+
+
+    public static Transform[] GetClosest(Transform[] entities, int count, Transform target)
     {
         int length = entities.Length;
         if (length == 0)

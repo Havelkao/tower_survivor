@@ -1,5 +1,4 @@
 using UnityEngine;
-using static Types;
 
 [CreateAssetMenu(fileName = "Wave", menuName = "Scriptable Objects/Wave")]
 public class Wave : ScriptableObject

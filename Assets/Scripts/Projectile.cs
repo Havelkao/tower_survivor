@@ -5,11 +5,13 @@ public class Projectile : MonoBehaviour
     private RangedWeapon weapon;
     private Transform target;
     private Rigidbody rb;
+    private int remainingChains;
 
     public void Init(RangedWeapon rangedWeapon, Transform target)
     {
         this.weapon = rangedWeapon;
         this.target = target;
+        remainingChains = rangedWeapon.chainCount;
     }
 
     private void Start()
@@ -18,8 +20,39 @@ public class Projectile : MonoBehaviour
         rb.mass = weapon.mass;
         if (target != null)
         {
-            Fire();
+            FireAt(target);
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        CollisionEffect(other.gameObject);
+
+        if (weapon.aoe > 0)
+        {
+            CheckAoE(transform.position);
+        }
+
+        if (remainingChains > 0)
+        {
+            remainingChains--;
+            //must be center around target, not projectile, for self-collision exclusion
+            Transform[] inChainRange = TargetLocator.GetTransformsWithinRange(other.transform, weapon.chainDistance, (int)PhysicsLayer.Enemy);
+            if (inChainRange.Length == 0)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                Transform[] nearestTargets = TargetLocator.GetFirst(inChainRange, 1);
+                Debug.DrawLine(transform.position, nearestTargets[0].position, Color.red, 1f);
+                FireAt(nearestTargets[0]);
+            }
+
+            return;
+        }
+
+        Destroy(gameObject);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -34,6 +67,15 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject);
     }
 
+    void CheckAoE(Vector3 center)
+    {
+        Collider[] colliders = Physics.OverlapSphere(center, weapon.aoe, 1 << (int)PhysicsLayer.Enemy);
+        foreach (Collider collider in colliders)
+        {
+            CollisionEffect(collider.gameObject);
+        }
+    }
+
     void CollisionEffect(GameObject collidedObject)
     {
         if (collidedObject.CompareTag("Enemy"))
@@ -41,30 +83,32 @@ public class Projectile : MonoBehaviour
             Enemy enemy = collidedObject.GetComponent<Enemy>();
             enemy.TakeDamage(weapon);
         }
+
     }
 
-    void Fire()
+    void FireAt(Transform target)
     {
+        if (target == null) return;
+
         if (weapon.isGroundWeapon == true)
         {
-            FireAtAngle();
+            FireAtAngle(target);
         }
         else
         {
-            FireDirectly();
+            FireDirectly(target);
         }
     }
 
-    void FireDirectly()
+    void FireDirectly(Transform target)
     {
-        Vector3 direction = target.transform.position - transform.position;
-        rb.AddForce(weapon.projectileSpeed * direction, ForceMode.Impulse);
+        Vector3 direction = target.position - transform.localPosition;
+        rb.linearVelocity = direction.normalized * weapon.projectileSpeed * 10;
     }
 
-
-    void FireAtAngle(float angle = 45f)
+    void FireAtAngle(Transform target, float angle = 45f)
     {
-        Vector3 direction = target.position - transform.position; // get Target Direction
+        Vector3 direction = target.position - transform.position;
         float heightDiff = direction.y;
         direction.y = 0; // retain only the horizontal difference
         float distance = direction.magnitude; // get horizontal direction
@@ -74,21 +118,16 @@ public class Projectile : MonoBehaviour
 
         // Calculate the velocity magnitude
         float velocity = Mathf.Sqrt(distance * Physics.gravity.magnitude / Mathf.Sin(2 * radians));
-        if (velocity > 0) { 
-            rb.linearVelocity = velocity * direction.normalized;        
-        } else
+        if (velocity > 0)
         {
-            FireDirectly();
+            rb.linearVelocity = velocity * direction.normalized;
+        }
+        else
+        {
+            FireDirectly(target);
         }
     }
 
-    void CheckAoE(Vector3 center)
-    {
-        Collider[] colliders = Physics.OverlapSphere(center, weapon.aoe);
-        foreach (Collider collider in colliders)
-        {
-            CollisionEffect(collider.gameObject);
-        }
-    }
+
 
 }

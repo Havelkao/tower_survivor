@@ -1,17 +1,9 @@
-using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
-using static Types;
-
-public class Player : Unit, Types.IUpgradable
+public class Player : Unit, IUpgradable
 {
     public static Player Instance;
-    public int income = 10;
-    public int bank = 100; 
+    private int income = 10;
+    private int bank = 100;
     private readonly int incomePeriod = 5;
-    private TextMeshProUGUI bankDisplay;
-    private TextMeshProUGUI incomeDisplay;
-
     protected override void Awake()
     {
         if (Instance == null)
@@ -22,23 +14,22 @@ public class Player : Unit, Types.IUpgradable
     }
     void Start()
     {
-        bankDisplay = GameObject.Find("BankValue").GetComponent<TextMeshProUGUI>();
-        bankDisplay.text = bank.ToString();
-        incomeDisplay = GameObject.Find("IncomeValue").GetComponent<TextMeshProUGUI>();
-        incomeDisplay.text = income.ToString();
-
+        GameUI.Instance.bank.text = bank.ToString();
+        GameUI.Instance.income.text = income.ToString();
         InvokeRepeating(nameof(GainIncome), 0, incomePeriod);
     }
 
     public void GainIncome()
     {
         bank += income;
-        bankDisplay.text = bank.ToString();
+        GameUI.Instance.bank.text = bank.ToString();
     }
 
-    public void ChangeBankValue(int amount) { 
+    public void ChangeBankValue(int amount)
+    {
         bank += amount;
-        bankDisplay.text = bank.ToString();
+        GameUI.Instance.bank.text = bank.ToString();
+
     }
 
     public void IncreaseIncome(int amount)
@@ -46,24 +37,29 @@ public class Player : Unit, Types.IUpgradable
         if (amount > 0)
         {
             income += amount;
-            incomeDisplay.text = income.ToString();
+            GameUI.Instance.income.text = income.ToString();
         }
     }
-    
+
+    public bool CanAfford(int amount)
+    {
+        return bank >= amount;
+    }
+
     public void ApplyUpgrade(Upgrade upgrade)
     {
         switch (upgrade.property)
         {
-            case UpgradableProp.baseDamage:
+            case UpgradableProp.Income:
                 IncreaseIncome((int)upgrade.value);
                 break;
-            case UpgradableProp.maxHealth:
+            case UpgradableProp.MaxHealth:
                 health += upgrade.value;
                 break;
-            case UpgradableProp.healthMulti:
+            case UpgradableProp.HealthMulti:
                 healthMulti += upgrade.value;
                 break;
-            case UpgradableProp.armour:
+            case UpgradableProp.Armour:
                 armour += (int)upgrade.value;
                 break;
         }

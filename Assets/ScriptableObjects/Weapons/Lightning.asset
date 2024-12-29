@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8670163ce64aa5a43bded2565e6bb287, type: 3}
   m_Name: Lightning
   m_EditorClassIdentifier: 
-  damage: 20
-  attackSpeed: 1
-  maxRange: 0
-  minRange: 0
-  multiStrike: 1
+  baseDamage: 10
+  damageMulti: 1
+  baseAttackSpeed: 2
+  attackSpeedMulti: 1
   damageType: 2
-  projectileSpeed: 1
-  isGroundWeapon: 1
-  projectilePrefab: {fileID: 6868376202079178089, guid: 2433c9aeca53dcb4284402ae73b68436, type: 3}
+  range: 15
+  aoe: 0
+  isGroundWeapon: 0
+  projectilePrefab: {fileID: 6868376202079178089, guid: fb01d1d2060ac8c4095cfa1ffd3b40dd, type: 3}
+  projectileSpeed: 2
   mass: 1
-  aoe: 3
+  projectileCount: 1
+  chainCount: 2
+  chainDistance: 3
+  targetMode: 3

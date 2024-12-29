@@ -12,20 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8670163ce64aa5a43bded2565e6bb287, type: 3}
   m_Name: Bow
   m_EditorClassIdentifier: 
-  baseDamage: 20
-  damage: 20
+  baseDamage: 30
+  damageMulti: 1
   baseAttackSpeed: 2
-  attackSpeed: 2
+  attackSpeedMulti: 1
   damageType: 1
   range: 15
-  isGroundWeapon: 0
   aoe: 0
-  damageMulti: 0
+  isGroundWeapon: 0
   damageTypeMulti: 0
-  attackSpeedMulti: 0
   projectilePrefab: {fileID: 6868376202079178089, guid: 2433c9aeca53dcb4284402ae73b68436, type: 3}
   projectileSpeed: 3
   mass: 1
   projectileCount: 1
-  chainCount: 0
-  targetMode: 2
+  chain: 0
+  chainDistance: 0
+  targetMode: 1

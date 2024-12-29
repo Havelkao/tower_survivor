@@ -1,0 +1,24 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement data-source-type="Upgrade, Assembly-CSharp" style="flex-grow: 1; align-content: auto; justify-content: space-around; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px; font-size: 30px;">
+        <engine:Label text="Subject" name="Subject">
+            <Bindings>
+                <engine:DataBinding property="text" data-source-path="subject" binding-mode="ToTarget" />
+            </Bindings>
+        </engine:Label>
+        <engine:Label text="Property" name="Property">
+            <Bindings>
+                <engine:DataBinding property="text" data-source-path="property" binding-mode="ToTarget" />
+            </Bindings>
+        </engine:Label>
+        <engine:Label text="Value" name="Value">
+            <Bindings>
+                <engine:DataBinding property="text" data-source-path="value" binding-mode="ToTarget" />
+            </Bindings>
+        </engine:Label>
+        <engine:Label text="Price" name="Price" data-source-type="Upgrade, Assembly-CSharp">
+            <Bindings>
+                <engine:DataBinding property="text" data-source-path="price" binding-mode="ToTarget" />
+            </Bindings>
+        </engine:Label>
+    </engine:VisualElement>
+</engine:UXML>

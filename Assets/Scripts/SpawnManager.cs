@@ -1,7 +1,5 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
-using static Types;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -11,9 +9,8 @@ public class SpawnManager : MonoBehaviour
     private float spawnDistance = 15f;
     private Wave currentWave;
     private int currentWaveIndex = 0;
-    private int waveDuration = 15;
+    private float waveDuration = 15f;
     private int breakDuration = 5;
-    private TextMeshProUGUI waveDisplay;
     private Timer timer;
 
     private void Awake()
@@ -23,18 +20,21 @@ public class SpawnManager : MonoBehaviour
             Instance = this;
         }
 
-    }
-    void Start()
-    {
-        timer = GameObject.Find("Timer").GetComponent<Timer>();
-        waveDisplay = GameObject.Find("WaveDisplay").GetComponent<TextMeshProUGUI>();
-        waveDisplay.text = $"Wave {currentWaveIndex + 1}";
+        timer = GameObject.Find("Game").GetComponent<Timer>();
+        timer.timeRemaining = waveDuration;
         currentWave = waves[0];
+    }
+
+    public void Run()
+    {
+        GameUI.Instance.SetWave(currentWaveIndex);
         StartCoroutine(SpawnWave());
     }
 
     IEnumerator SpawnWave()
     {
+        timer.isActive = true;
+
         while (currentWaveIndex < waves.Length)
         {
             Coroutine[] coroutines = new Coroutine[currentWave.enemies.Length];
@@ -60,9 +60,9 @@ public class SpawnManager : MonoBehaviour
             {
                 break;
             }
-                currentWaveIndex++;
-                currentWave = this.waves[currentWaveIndex];
-                waveDisplay.text = $"Wave {currentWaveIndex + 1}";
+            currentWaveIndex++;
+            currentWave = this.waves[currentWaveIndex];
+            GameUI.Instance.SetWave(currentWaveIndex);
         }
     }
 
@@ -71,17 +71,17 @@ public class SpawnManager : MonoBehaviour
         //must manually dispose of the coroutine
         while (true)
         {
-            Vector3 spawnPosition = GetRandomPosition(enemy.prefab.transform.position.y);
-            Instantiate(enemy.prefab, spawnPosition, Quaternion.identity, transform);
+            Spawn(enemy.prefab);
             yield return new WaitForSeconds(1 / enemy.spawnRate);
         }
-        
+
     }
 
     void Spawn(GameObject prefab)
     {
         Vector3 spawnPosition = GetRandomPosition(prefab.transform.position.y);
         Instantiate(prefab, spawnPosition, Quaternion.identity, transform);
+        //instance.GetComponent<Enemy>().SetTarget(Player.Instance);
     }
 
     Vector3 GetRandomPosition(float y)

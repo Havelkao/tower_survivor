@@ -6,7 +6,7 @@ public class Unit : MonoBehaviour
     public float maxHealth;
     public float health;
     public float healthMulti;
-    public Types.ArmourType armourType;
+    public ArmourType armourType;
     public int armour;
     private Image healthBar;
 
@@ -23,8 +23,7 @@ public class Unit : MonoBehaviour
 
     public void TakeDamage(Weapon source)
     {
-        float reduction = (armour * 0.06f) / (1 + 0.06f * armour);
-        float damage = source.damage * Utils.GetDamageMulti(source.damageType, armourType) / (1 + reduction);
+        float damage = source.damage * Utils.GetTypeMulti(source.damageType, armourType) * Utils.CalculateArmourEffect(armour);
         if (damage > 0)
         {
             health -= damage;
@@ -35,7 +34,7 @@ public class Unit : MonoBehaviour
     public void TakeDamage(int damage)
     {
         float reduction = (armour * 0.06f) / (1 + 0.06f * armour);
-        float reduced = damage * Utils.GetDamageMulti(Types.DamageType.Normal, armourType) / (1 + reduction);
+        float reduced = damage * Utils.GetTypeMulti(DamageType.Normal, armourType) * Utils.CalculateArmourEffect(armour);
         if (reduced > 0)
         {
             health -= reduced;

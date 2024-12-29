@@ -124,13 +124,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   health: 0
+  healthMulti: 0
   armourType: 1
-  armour: 0
+  armour: 1
   baseDamage: 5
-  damageMultiplier: 0
+  damageMultiplier: 1
   movementSpeed: 1
   movementSpeedMultiplier: 0
-  baseAtackSpeed: 0.5
+  baseAttackSpeed: 0
   attackSpeedMultiplier: 0
   bounty: 1
   range: 3
