@@ -10,8 +10,9 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
-# TMP
+# TMP / UI
 /[Aa]ssets/TextMesh*Pro/
+/[Aa]ssets/UIElementsSchema/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

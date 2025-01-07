@@ -10,6 +10,13 @@ public class GlobalWeaponModifiers : IUpgradable
         { DamageType.Chaos, new DamageTypeMulti(0, 0f, 0f) }
     };
 
+    private static Dictionary<DamageType, DamageTypeMulti> defaultState = new(damageTypesMultipliers);
+
+    public static void Reset()
+    {
+        damageTypesMultipliers = defaultState;
+    }
+
     public void ApplyUpgrade(Upgrade upgrade)
     {
         //switch (upgrade.property)
@@ -29,11 +36,16 @@ public class GlobalWeaponModifiers : IUpgradable
 
 public class GlobalEnemyModifiers : IUpgradable
 {
-    public static float damageMulti;
-    public static float healthMulti;
-    public static float attackSpeedMulti;
-    public static float movementSpeedMulti;
-    public static int armour;
+    public static float damageMulti = 0f;
+    public static float healthMulti = 0f;
+    public static float attackSpeedMulti = 0f;
+    public static float movementSpeedMulti = 0f;
+    public static int armour = 0;
+
+    public static void Reset()
+    {
+        damageMulti = 0f; healthMulti = 0f; attackSpeedMulti = 0f; movementSpeedMulti = 0f; armour = 0;
+    }
 
     public void ApplyUpgrade(Upgrade upgrade)
     {

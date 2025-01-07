@@ -1,15 +1,19 @@
-public class Player : Unit, IUpgradable
+public class Player : Unit, IUpgradable, ITargetable
 {
     public static Player Instance;
-    private int income = 10;
+    private int income = 5;
     private int bank = 100;
-    private readonly int incomePeriod = 5;
+    private readonly int incomePeriod = 1;
     protected override void Awake()
     {
         if (Instance == null)
         {
             base.Awake();
             Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
     void Start()

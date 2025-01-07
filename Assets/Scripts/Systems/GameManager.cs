@@ -31,6 +31,14 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    public void RestartGame()
+    {
+        SpawnManager.Instance.Reset();
+        // remove weapons
+        GlobalEnemyModifiers.Reset();
+        GlobalWeaponModifiers.Reset();
+    }
+
     IEnumerator NewGameSequentialSteps()
     {
         yield return MoveCamera();
@@ -49,7 +57,7 @@ public class GameManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / startGameDelay);
             gameCamera.transform.position = Vector3.Lerp(startPosition, targetPos, t);
-            // Yield and wait until the next frame before continuing the loop
+            // Yield return null makes script wait for frame to finish
             yield return null;
         }
     }

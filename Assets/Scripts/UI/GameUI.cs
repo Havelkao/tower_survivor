@@ -10,9 +10,12 @@ public class GameUI : UI
     public Label bank;
     public Label income;
     public VisualElement upgrades;
-    public Upgrade[] upgradeArray;
-    [SerializeField] VisualTreeAsset myTreeAssetMember;
+    public VisualElement newWeapon;
 
+    public Upgrade[] upgradeArray;
+    [SerializeField] VisualTreeAsset upgradeTemplate;
+    public RangedWeapon[] weaponArray;
+    [SerializeField] VisualTreeAsset newWeaponTemplate;
 
     void Awake()
     {
@@ -26,15 +29,28 @@ public class GameUI : UI
         bank = document.rootVisualElement.Q<Label>("Bank");
         income = document.rootVisualElement.Q<Label>("Income");
         upgrades = document.rootVisualElement.Q<VisualElement>("Upgrades");
+        newWeapon = document.rootVisualElement.Q<VisualElement>("WeaponSelection");
+        Shooter shooter = GameObject.Find("Tower").GetComponent<Shooter>();
 
         foreach (var upgrade in upgradeArray)
         {
-            TemplateContainer myUI = myTreeAssetMember.Instantiate();
-            myUI.dataSource = upgrade;
-            myUI.RegisterCallback<ClickEvent>(upgrade.Buy);
-            upgrades.Add(myUI);
+            TemplateContainer template = upgradeTemplate.Instantiate();
+            // instance makes object call awake 
+            Upgrade upgradeInstance = Instantiate(upgrade);
+            template.dataSource = upgradeInstance;
+            template.RegisterCallback<ClickEvent>(upgradeInstance.Buy);
+            upgrades.Add(template);
+        }
+
+        foreach (var weapon in weaponArray)
+        {
+            TemplateContainer template = newWeaponTemplate.Instantiate();
+            template.dataSource = weapon;
+            template.RegisterCallback<ClickEvent>((evt) => shooter.AddWeapon(evt, weapon));
+            newWeapon.Add(template);
         }
     }
+
 
 
     public void SetWave(int waveIndex)

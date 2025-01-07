@@ -3,10 +3,11 @@ using UnityEngine;
 
 public class Weapon : ScriptableObject
 {
-    public float damage { get { return (baseDamage + GetGlobals().baseDamage) * (damageMulti + GetGlobals().damageMulti); } }
+    public WeaponType type;
+    public float Damage { get { return (baseDamage + GetGlobals().baseDamage) * (damageMulti + GetGlobals().damageMulti); } }
     public int baseDamage;
     public float damageMulti;
-    public float attackSpeed { get { return baseAttackSpeed * (attackSpeedMulti + GetGlobals().attackSpeedMulti); } }
+    public float AttackSpeed { get { return baseAttackSpeed * (attackSpeedMulti + GetGlobals().attackSpeedMulti); } }
     public float baseAttackSpeed;
     public float attackSpeedMulti;
     public DamageType damageType;

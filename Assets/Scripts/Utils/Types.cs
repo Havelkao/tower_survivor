@@ -22,7 +22,8 @@ public enum TargetMode
     Oldest,
     Newest,
     Random,
-    Closest
+    Closest,
+    Threatening
 }
 
 public enum PhysicsLayer
@@ -47,6 +48,13 @@ public enum UpgradableProp
     Income
 }
 
+public enum DebuffableProp
+{
+    BaseDamage,
+    Armour,
+    MovementSpeedMulti
+}
+
 public static class EnumExtensions
 {
     public static string Textify(this UpgradableProp prop)
@@ -64,9 +72,10 @@ public enum UpgradeSubject
 
 public enum WeaponType
 {
+    None,
     Bow,
     Cannon,
-    None
+    Lightning
 }
 
 [System.Serializable]
@@ -81,6 +90,22 @@ public interface IUpgradable
     void ApplyUpgrade(Upgrade upgrade);
 }
 
+public interface ITargetable
+{
+    Transform ObjectTransform { get; }
+    void TakeDamage(Weapon weapon);
+    void TakeDamage(int damage);
+    void TakeDamage(int damage, Unit unit);
+}
+
+public interface IDebuffable
+{
+    void ApplyDebuff(Debuff debuff);
+    void RemoveDebuff(Debuff debuff);
+}
+
+
+
 public struct DamageTypeMulti
 {
     public int baseDamage;
@@ -94,3 +119,4 @@ public struct DamageTypeMulti
         this.attackSpeedMulti = attackSpeedMulti;
     }
 }
+

@@ -44,7 +44,7 @@ public class Projectile : MonoBehaviour
             }
             else
             {
-                Transform[] nearestTargets = TargetLocator.GetFirst(inChainRange, 1);
+                Transform[] nearestTargets = TargetLocator.FirstInFirstOut(inChainRange, 1);
                 Debug.DrawLine(transform.position, nearestTargets[0].position, Color.red, 1f);
                 FireAt(nearestTargets[0]);
             }
@@ -102,8 +102,9 @@ public class Projectile : MonoBehaviour
 
     void FireDirectly(Transform target)
     {
+        // localPosition for chain
         Vector3 direction = target.position - transform.localPosition;
-        rb.linearVelocity = direction.normalized * weapon.projectileSpeed * 10;
+        rb.linearVelocity = 10 * weapon.projectileSpeed * direction.normalized;
     }
 
     void FireAtAngle(Transform target, float angle = 45f)

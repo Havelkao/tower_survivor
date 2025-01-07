@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Unit
+public class Enemy : Unit, IDebuffable
 {
     public int baseDamage;
     public float damageMultiplier;
@@ -11,21 +12,24 @@ public class Enemy : Unit
     public int bounty;
     public int range;
     public bool isFlying;
-    private Vector3 targetPos;
-    private bool isAttacking = false;
-    private bool IsInRange { get { return Vector3.Distance(transform.position, targetPos) <= range; } }
+    private Vector3 attackPosition;
+    public bool isAttacking = false;
+    private bool IsInRange { get { return Vector3.Distance(transform.position, attackPosition) <= range; } }
+    public bool isStunned = false;
+    public bool isImpaired = false;
+    private ITargetable target;
+    private Dictionary<DebuffableProp, Debuff> activeDebuffs = new();
 
-    protected override void Awake()
+
+    public void SetTarget(ITargetable target)
     {
-        base.Awake();
-        Vector3 targetPosition = GameObject.Find("Tower").transform.position;
-        targetPos = targetPosition - (targetPosition - transform.position).normalized * range;
+        this.target = target;
+        attackPosition = target.ObjectTransform.position - (target.ObjectTransform.position - transform.position).normalized * range;
     }
-
 
     public virtual void Attack()
     {
-        Player.Instance.TakeDamage(baseDamage);
+        target.TakeDamage(baseDamage, this);
         if (IsInRange)
         {
             Invoke(nameof(Attack), 1 / baseAttackSpeed);
@@ -38,9 +42,9 @@ public class Enemy : Unit
 
     private void Update()
     {
-        if (health > 0)
+        if (health > 0 && !isStunned)
         {
-            if (!IsInRange)
+            if (!IsInRange && !isImpaired)
             {
                 Move();
             }
@@ -50,14 +54,15 @@ public class Enemy : Unit
                 Invoke(nameof(Attack), 0);
             }
         }
-        else
+
+        if (health < 0)
         {
             Die();
         }
     }
     public void Move()
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetPos + new Vector3(0, transform.position.y, 0), movementSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, attackPosition + new Vector3(0, transform.position.y, 0), movementSpeed * Time.deltaTime);
     }
 
     protected override void Die()
@@ -65,4 +70,33 @@ public class Enemy : Unit
         base.Die();
         Player.Instance.ChangeBankValue(bounty);
     }
+
+    public void ApplyDebuff(Debuff debuff)
+    {
+        if (activeDebuffs.ContainsKey(debuff.prop))
+        {
+            return;
+        }
+
+        switch (debuff.prop)
+        {
+            case DebuffableProp.Armour:
+                debuff.SetCallbacks(() => (float)armour, (value) => armour += (int)value);
+                break;
+            case DebuffableProp.MovementSpeedMulti:
+                break;
+
+        }
+        activeDebuffs[debuff.prop] = debuff;
+        StartCoroutine(debuff.ApplyWithRevert(this));
+    }
+
+    public void RemoveDebuff(Debuff debuff)
+    {
+        if (activeDebuffs.ContainsKey(debuff.prop))
+        {
+            activeDebuffs.Remove(debuff.prop);
+        }
+    }
+
 }

@@ -19,4 +19,5 @@
             <engine:VisualElement name="Upgrades" class="bordered" style="flex-grow: 0; flex-direction: row; justify-content: flex-end;" />
         </engine:VisualElement>
     </engine:VisualElement>
+    <engine:VisualElement name="WeaponSelection" style="flex-grow: 0; position: absolute; top: 50%; left: 50%; right: auto; height: auto; bottom: auto; translate: -50% -50%; flex-shrink: 1; transform-origin: center;" />
 </engine:UXML>

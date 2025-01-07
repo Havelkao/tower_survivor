@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   property: 11
   subject: 1
-  sprite: {fileID: 0}
-  value: 10
+  value: 2
   price: 50
   weight: 0
-  weaponType: 2
+  weaponType: 0
   damageType: 0
+  subjectDisplay: 

@@ -12,6 +12,7 @@ public class SpawnManager : MonoBehaviour
     private float waveDuration = 15f;
     private int breakDuration = 5;
     private Timer timer;
+    private bool isActive = false;
 
     private void Awake()
     {
@@ -28,14 +29,34 @@ public class SpawnManager : MonoBehaviour
     public void Run()
     {
         GameUI.Instance.SetWave(currentWaveIndex);
+        isActive = true;
         StartCoroutine(SpawnWave());
+    }
+
+    public void Reset()
+    {
+        isActive = false;
+        RemoveEnemies();
+        currentWaveIndex = 0;
+        currentWave = waves[0];
+        Run();
+    }
+
+    public void RemoveEnemies()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var enemy in enemies)
+        {
+            Destroy(enemy);
+        }
+
     }
 
     IEnumerator SpawnWave()
     {
         timer.isActive = true;
 
-        while (currentWaveIndex < waves.Length)
+        while (currentWaveIndex < waves.Length && isActive)
         {
             Coroutine[] coroutines = new Coroutine[currentWave.enemies.Length];
 
@@ -68,8 +89,8 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator Spawn(WaveEnemy enemy)
     {
-        //must manually dispose of the coroutine
-        while (true)
+        //must manually dispose of the coroutine if not killing whole "SpawnWave"
+        while (isActive)
         {
             Spawn(enemy.prefab);
             yield return new WaitForSeconds(1 / enemy.spawnRate);
@@ -80,8 +101,8 @@ public class SpawnManager : MonoBehaviour
     void Spawn(GameObject prefab)
     {
         Vector3 spawnPosition = GetRandomPosition(prefab.transform.position.y);
-        Instantiate(prefab, spawnPosition, Quaternion.identity, transform);
-        //instance.GetComponent<Enemy>().SetTarget(Player.Instance);
+        GameObject instance = Instantiate(prefab, spawnPosition, Quaternion.identity, transform);
+        instance.GetComponent<Enemy>().SetTarget(Player.Instance);
     }
 
     Vector3 GetRandomPosition(float y)

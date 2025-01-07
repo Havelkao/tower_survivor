@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8670163ce64aa5a43bded2565e6bb287, type: 3}
   m_Name: Cannon
   m_EditorClassIdentifier: 
+  type: 2
   baseDamage: 20
   damageMulti: 1
   baseAttackSpeed: 1
@@ -20,11 +21,10 @@ MonoBehaviour:
   range: 15
   aoe: 3
   isGroundWeapon: 1
-  damageTypeMulti: 0
   projectilePrefab: {fileID: 6868376202079178089, guid: ec8e7bdbc1f272c4da2b115f54352ac8, type: 3}
   projectileSpeed: 1
   mass: 1
   projectileCount: 1
-  chain: 0
+  chainCount: 0
   chainDistance: 0
   targetMode: 2

@@ -266,7 +266,14 @@ MonoBehaviour:
   upgradeArray:
   - {fileID: 11400000, guid: a75f42086dd95d34db0f55cc8763955f, type: 2}
   - {fileID: 11400000, guid: 49fc4504bdd89cc47ae387c2aeaa5a48, type: 2}
-  myTreeAssetMember: {fileID: 9197481963319205126, guid: 6e58dff11d23d9c4392c2986bab77c03, type: 3}
+  - {fileID: 11400000, guid: 24efcbca81d5b9b488b3aee565631784, type: 2}
+  - {fileID: 11400000, guid: 77901d9a3efe0cc4b9c1649cd5ed6a46, type: 2}
+  upgradeTemplate: {fileID: 9197481963319205126, guid: 6e58dff11d23d9c4392c2986bab77c03, type: 3}
+  weaponArray:
+  - {fileID: 11400000, guid: b874ff3c3f1406a48b09bc8edababe23, type: 2}
+  - {fileID: 11400000, guid: 844b52aca0775d64a82cc9bd1848cc68, type: 2}
+  - {fileID: 11400000, guid: ac8167de08ac6904bb04603945ef50f2, type: 2}
+  newWeaponTemplate: {fileID: 9197481963319205126, guid: 5cf93f83fc68f3e4790bccbaf314525a, type: 3}
 --- !u!114 &237589681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -598,8 +605,6 @@ MonoBehaviour:
   healthMulti: 0
   armourType: 3
   armour: 0
-  income: 10
-  bank: 100
 --- !u!114 &1583132280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,9 +617,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e729c603f444245b4223c3233ebe2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponPrototypes:
-  - {fileID: 11400000, guid: 844b52aca0775d64a82cc9bd1848cc68, type: 2}
-  - {fileID: 11400000, guid: ac8167de08ac6904bb04603945ef50f2, type: 2}
 --- !u!1 &1616391825
 GameObject:
   m_ObjectHideFlags: 0
@@ -1161,7 +1163,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0

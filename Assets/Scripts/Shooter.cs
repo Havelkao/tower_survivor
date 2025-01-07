@@ -2,38 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Shooter : MonoBehaviour
 {
-    public List<RangedWeapon> weaponPrototypes;
-    private List<RangedWeapon> _weapons = new();
-    public List<RangedWeapon> Weapons
-    {
-        get
-        {
-            if (_weapons.Count == 0)
-            {
-                foreach (RangedWeapon weapon in weaponPrototypes)
-                {
-                    RangedWeapon instance = Instantiate(weapon);
-                    _weapons.Add(instance);
-                }
-                return _weapons;
-            }
-            else { return _weapons; }
-        }
-        set
-        {
-            weaponPrototypes.AddRange(value);
-            foreach (RangedWeapon newValue in value)
-            {
-                RangedWeapon instance = Instantiate(newValue);
-                _weapons.Add(instance);
-            }
-        }
-    }
+    public Dictionary<WeaponType, RangedWeapon> weapons = new();
     private Transform projectileContainer;
-
 
     void Awake()
     {
@@ -42,37 +16,43 @@ public class Shooter : MonoBehaviour
         {
             projectileContainer = transform;
         }
+    }
 
-
-        foreach (RangedWeapon weapon in Weapons)
-        {
-            StartCoroutine(Fire(weapon));
-        }
+    public void AddWeapon(ClickEvent _, RangedWeapon weapon)
+    {
+        RangedWeapon instance = Instantiate(weapon);
+        weapons[weapon.type] = instance;
+        StartCoroutine(Fire(instance));
     }
 
     IEnumerator Fire(RangedWeapon weapon)
     {
-        while (true)
+        while (weapon == weapons[weapon.type])
         {
-            yield return new WaitForSeconds(1 / weapon.attackSpeed);
+            yield return new WaitForSeconds(1 / weapon.AttackSpeed);
 
             if (SpawnManager.Instance.transform.childCount == 0) continue;
 
             Transform[] targetsInRange = TargetLocator.GetTransformsWithinRange(SpawnManager.Instance.transform, weapon.range, (int)PhysicsLayer.Enemy);
+            if (targetsInRange.Length == 0) continue;
+
             Transform[] targets = new Transform[0];
             switch (weapon.targetMode)
             {
                 case TargetMode.Oldest:
-                    targets = TargetLocator.GetFirst(targetsInRange, weapon.projectileCount);
+                    targets = TargetLocator.FirstInFirstOut(targetsInRange, weapon.projectileCount);
                     break;
                 case TargetMode.Closest:
-                    targets = TargetLocator.GetClosest(targetsInRange, weapon.projectileCount, SpawnManager.Instance.transform);
+                    targets = TargetLocator.GetClosest(targetsInRange, weapon.projectileCount, transform);
                     break;
                 case TargetMode.Newest:
-                    targets = TargetLocator.GetLast(targetsInRange, weapon.projectileCount);
+                    targets = TargetLocator.LastInFirstOut(targetsInRange, weapon.projectileCount);
                     break;
                 case TargetMode.Random:
                     targets = TargetLocator.GetRandom(targetsInRange, weapon.projectileCount);
+                    break;
+                case TargetMode.Threatening:
+                    targets = TargetLocator.GetThreatening(targetsInRange, weapon.projectileCount);
                     break;
             }
 
@@ -108,6 +88,46 @@ public static class TargetLocator
         return result.ToArray<Transform>();
     }
 
+    public static GameObject[] GetGameObjectsWithinRange(Transform center, float distance, int layer)
+    {
+        List<GameObject> result = new();
+
+        Collider[] colliders = Physics.OverlapSphere(center.position, distance, 1 << layer);
+        foreach (Collider collider in colliders)
+        {
+            if (collider.gameObject == center.gameObject)
+            {
+                continue;
+            }
+            result.Add(collider.gameObject);
+        }
+
+        return result.ToArray<GameObject>();
+    }
+
+    public static Transform[] GetThreatening(Transform[] entities, int count)
+    {
+        if (entities.Length == 0)
+        {
+            return new Transform[0];
+        }
+
+        if (entities.Length <= count)
+        {
+            return entities;
+        }
+
+        var attackingEnemies = entities.Where(e => e.GetComponent<Enemy>().isAttacking == true).ToArray();
+        if (attackingEnemies.Length < count)
+        {
+            var additionalEntities = entities.Take(count - attackingEnemies.Length).ToArray();
+
+            return attackingEnemies.Concat(additionalEntities).ToArray();
+        }
+
+        return attackingEnemies.Take(count).ToArray();
+    }
+
     public static Transform[] GetRandom(Transform[] entities, int count)
     {
         int length = entities.Length;
@@ -129,7 +149,7 @@ public static class TargetLocator
             int randomIndex;
             do
             {
-                randomIndex = UnityEngine.Random.Range(0, length);
+                randomIndex = Random.Range(0, length);
             }
             while (selectedIndices.Contains(randomIndex));
 
@@ -140,7 +160,7 @@ public static class TargetLocator
         return randomEntity;
     }
 
-    public static Transform[] GetFirst(Transform[] entities, int count)
+    public static Transform[] FirstInFirstOut(Transform[] entities, int count)
     {
         if (entities.Length == 0)
         {
@@ -155,7 +175,7 @@ public static class TargetLocator
         return entities.Take(count).ToArray();
     }
 
-    public static Transform[] GetLast(Transform[] entities, int count)
+    public static Transform[] LastInFirstOut(Transform[] entities, int count)
     {
         if (entities.Length == 0)
         {
@@ -169,9 +189,6 @@ public static class TargetLocator
 
         return entities.TakeLast(count).ToArray();
     }
-
-
-
 
     public static Transform[] GetClosest(Transform[] entities, int count, Transform target)
     {
